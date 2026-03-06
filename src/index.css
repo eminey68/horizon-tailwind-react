@@ -1,29 +1,110 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-	html {
-		font-family: 'DM Sans', sans-serif !important;
-		font-feature-settings: 'kern' !important;
-		-webkit-font-smoothing: antialiased;
-		letter-spacing: -0.5px;
-	}
+    html {
+        font-family: 'DM Sans', sans-serif !important;
+        font-feature-settings: 'kern' !important;
+        -webkit-font-smoothing: antialiased;
+        letter-spacing: -0.5px;
+    }
 }
 
+/* Checkbox stilleri */
 input.defaultCheckbox::before {
-	content: url(../src/assets/svg/checked.svg); 
-	color: white;
-	opacity: 0; 
-	height: 16px; 
-	width: 16px;
-	position: absolute; 
-	left: 50%;
-	transform: translate(-50%, 0px);
+    content: url(../src/assets/svg/checked.svg); 
+    color: white;
+    opacity: 0; 
+    height: 16px; 
+    width: 16px;
+    position: absolute; 
+    left: 50%;
+    transform: translate(-50%, 0px);
 } 
-
 input:checked.defaultCheckbox::before { 
-	opacity: 1;
+    opacity: 1;
+}
+
+
+/* 1. Takvim Genel Çerçevesi (Grafik/Tablo görünümünü siler) */
+.react-calendar {
+    background-color: transparent !important; /* Arka plan yok */
+    border: none !important;                  /* Kenarlık yok */
+    font-family: 'DM Sans', sans-serif !important;
+    width: 100% !important;
+}
+
+/* 2. Üst Kısım: Navigasyon (Oklar ve Tarih) */
+.react-calendar__navigation {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px; /* Takvim ile başlık arasına boşluk */
+}
+
+/* Ok Tuşları (Kutucuk: Lacivert, Ok: Beyaz) */
+.react-calendar__navigation__arrow {
+    background-color: #1B3D6D !important;
+    color: white !important;
+    border-radius: 10px !important;
+    font-size: 20px !important;
+    min-width: 40px !important;
+    height: 40px !important;
+    margin: 0 4px !important;
+}
+
+/* Ortadaki Tarih Yazısı (Şubat 2026) -> LACİVERT */
+.react-calendar__navigation__label {
+    color: #1B3D6D !important;
+    font-weight: 700 !important; /* Kalın yazı */
+    font-size: 18px !important;
+    background: transparent !important;
+}
+
+/* 3. Gün İsimleri (Pzt, Sal...) -> MORLUK BURADAN SİLİNİYOR */
+.react-calendar__month-view__weekdays {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 0.8em;
+    color: #A3AED0 !important; /* Mor yerine Gri yapıldı */
+    text-decoration: none !important;
+    border-bottom: none !important;
+}
+
+/* Gün isimlerinin altındaki varsayılan çizgiyi (abbr) kaldır */
+.react-calendar__month-view__weekdays__weekday abbr {
+    text-decoration: none !important;
+    cursor: default;
+}
+
+/* 4. Gün Kutucukları (Rakamlar) */
+.react-calendar__tile {
+    padding: 10px;
+    border-radius: 10px !important;
+    font-weight: 500;
+    font-size: 14px;
+    color: #2B3674; /* Varsayılan rakam rengi */
+}
+
+/* Seçili Gün -> LACİVERT */
+.react-calendar__tile--active {
+    background: #1B3D6D !important;
+    color: white !important;
+}
+
+/* Bugünün Tarihi -> SARI */
+.react-calendar__tile--now {
+    background: #EFB034 !important;
+    color: black !important;
+}
+
+/* Hover (Üzerine gelince) -> Açık Gri */
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+    background-color: #F4F7FE !important;
+    color: #1B3D6D !important;
 }

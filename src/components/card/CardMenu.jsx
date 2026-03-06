@@ -1,10 +1,7 @@
 import React from "react";
 import Dropdown from "components/dropdown";
-import { AiOutlineUser } from "react-icons/ai";
 import { BsThreeDots } from "react-icons/bs";
-import { FiSettings } from "react-icons/fi";
-import { AiOutlineShop } from "react-icons/ai";
-import { TiLightbulb } from "react-icons/ti";
+import { FiRefreshCw, FiPrinter, FiDownload, FiSettings } from "react-icons/fi";
 
 function CardMenu(props) {
   const { transparent } = props;
@@ -28,29 +25,40 @@ function CardMenu(props) {
       classNames={`${transparent ? "top-8" : "top-11"} right-0 w-max`}
       children={
         <div className="z-50 w-max rounded-xl bg-white py-3 px-4 text-sm shadow-xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none">
-          <p className="hover:text-black flex cursor-pointer items-center gap-2 text-gray-600 hover:font-medium">
+          
+          {/* 1. Seçenek: YENİLE */}
+          <p className="hover:text-black flex cursor-pointer items-center gap-2 text-gray-600 hover:font-medium dark:text-white dark:hover:text-gray-300">
             <span>
-              <AiOutlineUser />
+              <FiRefreshCw />
             </span>
-            Panel 1
+            Listeyi Yenile
           </p>
-          <p className="hover:text-black mt-2 flex cursor-pointer items-center gap-2 pt-1 text-gray-600 hover:font-medium">
+
+          {/* 2. Seçenek: EXCEL İNDİR */}
+          <p className="hover:text-black mt-2 flex cursor-pointer items-center gap-2 pt-1 text-gray-600 hover:font-medium dark:text-white dark:hover:text-gray-300">
             <span>
-              <AiOutlineShop />
+              <FiDownload />
             </span>
-            Panel 2
+            Excel İndir
           </p>
-          <p className="hover:text-black mt-2 flex cursor-pointer items-center gap-2 pt-1 text-gray-600 hover:font-medium">
+
+           {/* 3. Seçenek: YAZDIR */}
+           <p className="hover:text-black mt-2 flex cursor-pointer items-center gap-2 pt-1 text-gray-600 hover:font-medium dark:text-white dark:hover:text-gray-300">
             <span>
-              <TiLightbulb />
+              <FiPrinter />
             </span>
-            Panel 3
+            Yazdır
           </p>
-          <p className="hover:text-black mt-2 flex cursor-pointer items-center gap-2 pt-1 text-gray-600 hover:font-medium">
+          
+           {/* Ayırıcı Çizgi */}
+           <div className="my-2 h-px bg-gray-200 dark:bg-white/20" />
+
+           {/* 4. Seçenek: AYARLAR */}
+           <p className="hover:text-black flex cursor-pointer items-center gap-2 pt-1 text-gray-600 hover:font-medium dark:text-white dark:hover:text-gray-300">
             <span>
               <FiSettings />
             </span>
-            Panel 4
+            Tablo Ayarları
           </p>
         </div>
       }

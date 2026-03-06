@@ -1,75 +1,37 @@
-export const columnsDataDevelopment = [
-  {
-    Header: "NAME",
-    accessor: "name",
-  },
-  {
-    Header: "TECH",
-    accessor: "tech",
-  },
-  {
-    Header: "DATE",
-    accessor: "date",
-  },
-  {
-    Header: "PROGRESS",
-    accessor: "progress",
-  },
-];
-
 export const columnsDataCheck = [
   {
-    Header: "NAME",
+    Header: "REZERVASYON YERİ",
     accessor: "name",
   },
   {
-    Header: "PROGRESS",
+    Header: "DURUM",
     accessor: "progress",
   },
   {
-    Header: "QUANTITY",
+    Header: "KİŞİ SAYISI",
     accessor: "quantity",
   },
   {
-    Header: "DATE",
-    accessor: "date",
-  },
-];
-
-export const columnsDataColumns = [
-  {
-    Header: "NAME",
-    accessor: "name",
-  },
-  {
-    Header: "PROGRESS",
-    accessor: "progress",
-  },
-  {
-    Header: "QUANTITY",
-    accessor: "quantity",
-  },
-  {
-    Header: "DATE",
+    Header: "TARİH",
     accessor: "date",
   },
 ];
 
 export const columnsDataComplex = [
   {
-    Header: "NAME",
+    Header: "ODA ADI",
     accessor: "name",
   },
   {
-    Header: "STATUS",
+    Header: "DURUM",
     accessor: "status",
   },
   {
-    Header: "DATE",
+    Header: "TARİH",
     accessor: "date",
   },
   {
-    Header: "PROGRESS",
+    Header: "DOLULUK",
     accessor: "progress",
   },
 ];

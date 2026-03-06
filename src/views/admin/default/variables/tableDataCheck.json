@@ -1,32 +1,32 @@
 [
   {
-    "name": ["Marketplace", false],
-    "quantity": 2458,
-    "date": "Apr 26, 2022",
-    "progress": 75.5
+    "name": ["Z-04 Yazılım Lab.", true],
+    "quantity": 45,
+    "status": "Approved",
+    "date": "12.03.2026 - 14:00"
   },
   {
-    "name": ["Venus DB PRO", true],
-    "quantity": 1485,
-    "date": "Jul 20, 2022",
-    "progress": 35.4
+    "name": ["Toplantı Odası A", true],
+    "quantity": 12,
+    "status": "Pending",
+    "date": "13.03.2026 - 09:30"
   },
   {
-    "name": ["Venus DS", true],
-    "quantity": 1024,
-    "date": "Sep 30, 2022",
-    "progress": 25
+    "name": ["Konferans Salonu", false],
+    "quantity": 150,
+    "status": "Approved",
+    "date": "14.03.2026 - 10:00"
   },
   {
-    "name": ["Venus 3D Asset", true],
-    "quantity": 858,
-    "date": "Oct 24, 2022",
-    "progress": 100
+    "name": ["Fizik Laboratuvarı", true],
+    "quantity": 30,
+    "status": "Error",
+    "date": "15.03.2026 - 11:00"
   },
   {
-    "name": ["Marketplace", false],
-    "quantity": 258,
-    "date": "Nov 29, 2022",
-    "progress": 75.5
+    "name": ["Kütüphane Çalışma Odası", true],
+    "quantity": 6,
+    "status": "Pending",
+    "date": "16.03.2026 - 16:00"
   }
 ]

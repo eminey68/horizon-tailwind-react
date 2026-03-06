@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import DashIcon from "components/icons/DashIcon";
 // chakra imports
 
-export function SidebarLinks(props) {
+export default function SidebarLinks(props) {
   // Chakra color mode
   let location = useLocation();
 
@@ -32,7 +32,7 @@ export function SidebarLinks(props) {
                 <span
                   className={`${
                     activeRoute(route.path) === true
-                      ? "font-bold text-brand-500 dark:text-white"
+                      ? "font-bold text-gold-500 dark:text-white" // AKTİF İKON RENGİ: SARI
                       : "font-medium text-gray-600"
                   }`}
                 >
@@ -41,7 +41,7 @@ export function SidebarLinks(props) {
                 <p
                   className={`leading-1 ml-4 flex ${
                     activeRoute(route.path) === true
-                      ? "font-bold text-navy-700 dark:text-white"
+                      ? "font-bold text-navy-700 dark:text-white" // AKTİF YAZI RENGİ: KOYU MAVİ
                       : "font-medium text-gray-600"
                   }`}
                 >
@@ -49,7 +49,7 @@ export function SidebarLinks(props) {
                 </p>
               </li>
               {activeRoute(route.path) ? (
-                <div class="absolute right-0 top-px h-9 w-1 rounded-lg bg-brand-500 dark:bg-brand-400" />
+                <div className="absolute right-0 top-px h-9 w-1 rounded-lg bg-gold-500 dark:bg-brand-400" /> // SAĞDAKİ ÇUBUK: SARI
               ) : null}
             </div>
           </Link>
@@ -60,5 +60,3 @@ export function SidebarLinks(props) {
   // BRAND
   return createLinks(routes);
 }
-
-export default SidebarLinks;

@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Navbar from "components/navbar";
 import Sidebar from "components/sidebar";
-import Footer from "components/footer/Footer";
+// Footer importunu sildik
 import routes from "routes.js";
 
 export default function Admin(props) {
@@ -70,7 +70,7 @@ export default function Admin(props) {
           <div className="h-full">
             <Navbar
               onOpenSidenav={() => setOpen(true)}
-              logoText={"Horizon UI Tailwind React"}
+              logoText={"KİÜ KTS"} // Burayı Üniversite kısaltması yaptık
               brandText={currentRoute}
               secondary={getActiveNavbar(routes)}
               {...rest}
@@ -85,9 +85,9 @@ export default function Admin(props) {
                 />
               </Routes>
             </div>
-            <div className="p-3">
-              <Footer />
-            </div>
+            
+            {/* Footer Bileşeni ve Div'i Buradan Tamamen Silindi */}
+            
           </div>
         </main>
       </div>

@@ -11,15 +11,21 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-function CheckTable(props) {
+// Helper'ı en tepeye aldık
+const columnHelper = createColumnHelper();
+
+export default function CheckTable(props) {
   const { tableData } = props;
   const [sorting, setSorting] = React.useState([]);
   let defaultData = tableData;
+
+  // SÜTUN AYARLARI (SENİN VERİTABANINA GÖRE DÜZENLENDİ)
   const columns = [
+    // 1. REZERVASYON YERİ (Resources -> name)
     columnHelper.accessor("name", {
       id: "name",
       header: () => (
-        <p className="text-sm font-bold text-gray-600 dark:text-white">NAME</p>
+        <p className="text-sm font-bold text-gray-600 dark:text-white">REZERVASYON YERİ</p>
       ),
       cell: (info) => (
         <div className="flex items-center">
@@ -34,36 +40,56 @@ function CheckTable(props) {
         </div>
       ),
     }),
-    columnHelper.accessor("progress", {
-      id: "progress",
+
+    // 2. DURUM (Reservations -> status)
+    // Dokümanındaki 'Pending', 'Approved' yapısına uygun hale getirdik.
+    columnHelper.accessor("status", { 
+      id: "status",
       header: () => (
         <p className="text-sm font-bold text-gray-600 dark:text-white">
-          PROGRESS
+          DURUM
         </p>
       ),
       cell: (info) => (
-        <p className="text-sm font-bold text-navy-700 dark:text-white">
-          {info.getValue()}
-        </p>
+        <div className="flex items-center">
+          {/* Status değerine göre renk ve ikon değişimi */}
+          {info.getValue() === "Approved" ? (
+            <span className="flex items-center text-green-500 font-bold text-sm bg-green-100 px-2 py-1 rounded-md">
+               Onaylandı
+            </span>
+          ) : info.getValue() === "Pending" ? (
+            <span className="flex items-center text-orange-500 font-bold text-sm bg-orange-100 px-2 py-1 rounded-md">
+               Bekliyor
+            </span>
+          ) : (
+            <span className="text-red-500 font-bold text-sm bg-red-100 px-2 py-1 rounded-md">
+               İptal / Red
+            </span>
+          )}
+        </div>
       ),
     }),
+
+    // 3. KAPASİTE / KİŞİ SAYISI (Resources -> capacity)
     columnHelper.accessor("quantity", {
       id: "quantity",
       header: () => (
         <p className="text-sm font-bold text-gray-600 dark:text-white">
-          QUANTITY
+          KAPASİTE
         </p>
       ),
       cell: (info) => (
         <p className="text-sm font-bold text-navy-700 dark:text-white">
-          {info.getValue()}
+          {info.getValue()} Kişi
         </p>
       ),
     }),
+
+    // 4. TARİH (Reservations -> start_time)
     columnHelper.accessor("date", {
       id: "date",
       header: () => (
-        <p className="text-sm font-bold text-gray-600 dark:text-white">DATE</p>
+        <p className="text-sm font-bold text-gray-600 dark:text-white">TARİH</p>
       ),
       cell: (info) => (
         <p className="text-sm font-bold text-navy-700 dark:text-white">
@@ -71,7 +97,8 @@ function CheckTable(props) {
         </p>
       ),
     }),
-  ]; // eslint-disable-next-line
+  ];
+
   const [data, setData] = React.useState(() => [...defaultData]);
   const table = useReactTable({
     data,
@@ -84,13 +111,13 @@ function CheckTable(props) {
     getSortedRowModel: getSortedRowModel(),
     debugTable: true,
   });
+
   return (
     <Card extra={"w-full h-full sm:overflow-auto px-6"}>
       <header className="relative flex items-center justify-between pt-4">
         <div className="text-xl font-bold text-navy-700 dark:text-white">
-          Check Table
+          Son Rezervasyonlar
         </div>
-
         <CardMenu />
       </header>
 
@@ -112,10 +139,6 @@ function CheckTable(props) {
                           header.column.columnDef.header,
                           header.getContext()
                         )}
-                        {{
-                          asc: "",
-                          desc: "",
-                        }[header.column.getIsSorted()] ?? null}
                       </div>
                     </th>
                   );
@@ -134,7 +157,7 @@ function CheckTable(props) {
                       return (
                         <td
                           key={cell.id}
-                          className="min-w-[150px] border-white/0 py-3  pr-4"
+                          className="min-w-[150px] border-white/0 py-3 pr-4"
                         >
                           {flexRender(
                             cell.column.columnDef.cell,
@@ -152,6 +175,3 @@ function CheckTable(props) {
     </Card>
   );
 }
-
-export default CheckTable;
-const columnHelper = createColumnHelper();
