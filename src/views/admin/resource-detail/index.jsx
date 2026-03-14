@@ -1,120 +1,171 @@
-import React, { useEffect, useState } from "react";
-import Card from "components/card";
-import { FiArrowLeft, FiMapPin, FiInfo, FiCheckCircle } from "react-icons/fi";
+import React, { useState } from "react";
+import { FiClock, FiCalendar, FiInfo, FiMapPin, FiChevronLeft } from "react-icons/fi";
 
-const ResourceDetail = () => {
-  const [resource, setResource] = useState(null);
+export default function ResourceDetail() {
+  // Takvimde seçilen günü tutacağımız state
+  const [selectedDay, setSelectedDay] = useState(null);
 
-  // Sayfa açıldığında hafızaya kaydettiğimiz veriyi geri çağırıyoruz
-  useEffect(() => {
-    const savedData = localStorage.getItem("selectedResource");
-    if (savedData) {
-      setResource(JSON.parse(savedData));
-    }
-  }, []);
+  // BACKEND SİMÜLASYONU: Hangi günlerde hangi saatler dolu?
+  // (Örneğin: Ayın 12'sinde iki farklı saat dolu)
+  const bookedSlots = {
+    12: ["10:00 - 12:00", "14:30 - 16:30"],
+    15: ["09:00 - 11:00"],
+    18: ["13:00 - 15:00", "15:30 - 17:30"],
+    24: ["10:00 - 12:00"]
+  };
 
-  if (!resource) {
-    return <div className="mt-10 text-center text-gray-600">Kaynak bilgisi yükleniyor...</div>;
-  }
+  // 1'den 31'e kadar günleri oluşturan basit bir dizi (Mart ayı simülasyonu)
+  const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
 
   return (
-    <div className="mt-5 flex w-full flex-col gap-5">
+    <div className="flex w-full flex-col gap-5">
       
-      {/* Geri Dön Butonu */}
-      <div>
-        <a href="/admin/data-tables" className="inline-flex items-center gap-2 font-medium text-brand-500 hover:text-brand-600 dark:text-white">
-          <FiArrowLeft className="h-5 w-5" /> Kaynak Listesine Dön
-        </a>
+      {/* Üst Başlık ve Geri Butonu */}
+      <div className="flex flex-col gap-2 mb-2">
+        <button className="flex w-fit items-center gap-2 text-sm font-bold text-[#e6b13e] transition hover:text-[#d6a12e]">
+          <FiChevronLeft className="h-5 w-5" /> Kaynak Listesine Dön
+        </button>
+        <h2 className="text-3xl font-bold text-navy-700 dark:text-white">Kaynak Detay</h2>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
+      {/* Ana İçerik: İki Kolonlu Yapı */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         
-        {/* SOL TARAF - Kaynak Bilgileri Kartı */}
-        <div className="col-span-1 lg:col-span-7">
-          <Card extra={"w-full p-6"}>
-            <h2 className="text-3xl font-bold text-navy-700 dark:text-white mb-2">
-              {resource.name}
-            </h2>
-            <p className="flex items-center gap-2 text-base text-gray-600 dark:text-gray-300 mb-6">
-              <FiMapPin className="text-brand-500" /> {resource.campus ? resource.campus : "Karacasu Kampüsü"} | {resource.location ? resource.location : "A Blok"}
+        {/* --- SOL KOLON: DETAYLAR VE TAKVİM (2 birim genişlik) --- */}
+        <div className="flex flex-col gap-5 lg:col-span-2">
+          
+          {/* Kaynak Bilgileri Kartı */}
+          <div className="flex flex-col rounded-[20px] bg-white bg-clip-border p-6 shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:shadow-none">
+            <h3 className="text-2xl font-bold text-navy-700 dark:text-white">Z-04 Yazılım Laboratuvarı</h3>
+            <p className="mt-1 flex items-center gap-1 text-sm font-medium text-gray-600 dark:text-gray-400">
+              <FiMapPin className="text-[#e6b13e]" /> Karacasu Kampüsü | A Blok
             </p>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-xl bg-lightPrimary p-4 dark:bg-navy-900">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Kaynak Türü</p>
-                <p className="text-xl font-bold text-navy-700 dark:text-white">{resource.tech}</p>
+            {/* 4'lü Bilgi Kutuları */}
+            <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="flex flex-col justify-center rounded-2xl bg-gray-50 p-4 dark:bg-navy-700">
+                <p className="text-sm text-gray-500">Kaynak Türü</p>
+                <p className="text-lg font-bold text-navy-700 dark:text-white">Laboratuvar</p>
               </div>
-              <div className="rounded-xl bg-lightPrimary p-4 dark:bg-navy-900">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Kapasite</p>
-                <p className="text-xl font-bold text-navy-700 dark:text-white">{resource.quantity} Kişi</p>
+              <div className="flex flex-col justify-center rounded-2xl bg-gray-50 p-4 dark:bg-navy-700">
+                <p className="text-sm text-gray-500">Kapasite</p>
+                <p className="text-lg font-bold text-navy-700 dark:text-white">45 Kişi</p>
               </div>
-              <div className="rounded-xl bg-lightPrimary p-4 dark:bg-navy-900">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Mevcut Durum</p>
-                <p className={`text-xl font-bold ${resource.date === "Aktif" ? "text-green-500" : "text-red-500"}`}>
-                  {resource.date}
-                </p>
+              <div className="flex flex-col justify-center rounded-2xl bg-gray-50 p-4 dark:bg-navy-700">
+                <p className="text-sm text-gray-500">Mevcut Durum</p>
+                <p className="text-lg font-bold text-green-500">Aktif</p>
               </div>
-              <div className="rounded-xl bg-lightPrimary p-4 dark:bg-navy-900">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Sorumlu Birim</p>
-                <p className="text-xl font-bold text-navy-700 dark:text-white">Öğrenci İşleri / BİDB</p>
+              <div className="flex flex-col justify-center rounded-2xl bg-gray-50 p-4 dark:bg-navy-700">
+                <p className="text-sm text-gray-500">Sorumlu Birim</p>
+                <p className="text-lg font-bold text-navy-700 dark:text-white">Öğrenci İşleri / BİDB</p>
               </div>
             </div>
+
+            {/* Bilgi Notu */}
+            <div className="mt-6 flex items-start gap-3 rounded-2xl bg-blue-50 p-4 text-blue-600 dark:bg-navy-700 dark:text-blue-300">
+              <FiInfo className="mt-1 h-5 w-5 shrink-0" />
+              <p className="text-sm font-medium">
+                Bu laboratuvar/amfi sadece akademik takvim içerisinde yer alan saatlerde rezerve edilebilir. Lütfen talebinizi en az 2 gün önceden oluşturunuz.
+              </p>
+            </div>
+          </div>
+
+          {/* YENİ: DOLULUK TAKVİMİ KARTI */}
+          <div className="flex flex-col rounded-[20px] bg-white bg-clip-border p-6 shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:shadow-none">
+            <h4 className="text-lg font-bold text-navy-700 dark:text-white mb-4 flex items-center gap-2">
+              <FiCalendar className="text-brand-500" /> Mart 2026 Doluluk Takvimi
+            </h4>
             
-            <div className="mt-6 flex items-start gap-2 rounded-lg bg-blue-50 p-4 text-blue-700 dark:bg-navy-900 dark:text-blue-300">
-               <FiInfo className="mt-1 h-5 w-5 shrink-0" />
-               <p className="text-sm">
-                 Bu laboratuvar/amfi sadece akademik takvim içerisinde yer alan saatlerde rezerve edilebilir. Lütfen talebinizi en az 2 gün önceden oluşturunuz.
-               </p>
+            {/* Takvim Izgarası (Grid) */}
+            <div className="grid grid-cols-7 gap-2 text-center">
+              {['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map(day => (
+                <div key={day} className="text-xs font-bold text-gray-400 mb-2">{day}</div>
+              ))}
+              
+              {/* Boşluklar (Ayın ilk gününü kaydırmak için) */}
+              <div className="p-2"></div><div className="p-2"></div>
+              
+              {/* Günler */}
+              {daysInMonth.map(day => {
+                const isBooked = bookedSlots[day];
+                const isSelected = selectedDay === day;
+
+                return (
+                  <button
+                    key={day}
+                    onClick={() => setSelectedDay(day)}
+                    className={`relative flex h-10 w-10 flex-col items-center justify-center rounded-full text-sm font-bold transition-all mx-auto
+                      ${isSelected ? "bg-brand-500 text-white shadow-md" : "bg-gray-50 text-navy-700 hover:bg-gray-200 dark:bg-navy-700 dark:text-white dark:hover:bg-navy-600"}
+                    `}
+                  >
+                    {day}
+                    {/* Eğer o gün dolu bir saat varsa altına kırmızı nokta koy */}
+                    {isBooked && (
+                      <span className={`absolute bottom-1.5 h-1 w-1 rounded-full ${isSelected ? "bg-white" : "bg-red-500"}`}></span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
-          </Card>
+
+            {/* Tıklanan Günün Detayları (Açılır Kutu) */}
+            {selectedDay && (
+              <div className="mt-6 rounded-2xl border border-gray-100 bg-gray-50 p-4 dark:border-navy-600 dark:bg-navy-700">
+                <p className="text-sm font-bold text-navy-700 dark:text-white mb-3">
+                  {selectedDay} Mart 2026 İçin Dolu Saatler:
+                </p>
+                {bookedSlots[selectedDay] ? (
+                  <div className="flex flex-wrap gap-2">
+                    {bookedSlots[selectedDay].map((time, index) => (
+                      <span key={index} className="flex items-center gap-1 rounded-lg bg-red-100 px-3 py-1.5 text-xs font-bold text-red-600 dark:bg-red-500/20 dark:text-red-400">
+                        <FiClock /> {time} (Dolu)
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm font-medium text-green-500 flex items-center gap-1">
+                    ✅ Bu tarihte hiçbir rezervasyon yok. Tüm gün müsait!
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
         </div>
 
-        {/* SAĞ TARAF - Talep Formu Kartı */}
-        <div className="col-span-1 lg:col-span-5">
-          <Card extra={"w-full p-6 h-full"}>
-            <h3 className="text-xl font-bold text-navy-700 dark:text-white mb-4">
-              Rezervasyon Talebi Oluştur
-            </h3>
+        {/* --- SAĞ KOLON: REZERVASYON FORMU (1 birim genişlik) --- */}
+        <div className="flex flex-col h-fit rounded-[20px] bg-white bg-clip-border p-6 shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:shadow-none">
+          <h4 className="text-xl font-bold text-navy-700 dark:text-white mb-6">Rezervasyon Talebi Oluştur</h4>
+          
+          <form className="flex flex-col gap-4" onSubmit={(e) => { e.preventDefault(); alert("Talep Gönderildi!"); }}>
             
-            <div className="flex flex-col gap-4">
-              <div>
-                <label className="text-sm font-semibold text-gray-600 dark:text-white">Etkinlik / Kullanım Amacı</label>
-                <input type="text" placeholder="Örn: Proje Çalışması" className="mt-2 w-full rounded-lg border border-gray-200 bg-white p-3 text-sm outline-none focus:border-brand-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
-              </div>
-              
-              <div>
-                <label className="text-sm font-semibold text-gray-600 dark:text-white">Talep Edilen Tarih</label>
-                <input type="date" className="mt-2 w-full rounded-lg border border-gray-200 bg-white p-3 text-sm outline-none focus:border-brand-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-gray-600 dark:text-white">Saat Aralığı</label>
-                <div className="mt-2 flex gap-2">
-                  <input type="time" className="w-full rounded-lg border border-gray-200 bg-white p-3 text-sm outline-none focus:border-brand-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
-                  <span className="flex items-center text-gray-500">-</span>
-                  <input type="time" className="w-full rounded-lg border border-gray-200 bg-white p-3 text-sm outline-none focus:border-brand-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
-                </div>
-              </div>
-
-              <button
-                disabled={resource.date !== "Aktif"}
-                onClick={() => {
-                   alert("✅ Rezervasyon Talebiniz Alındı!");
-                   window.location.href = "/admin/reservations"; // Onaylayınca rezervasyonlarıma atsın
-                }}
-                className={`mt-4 w-full flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-base font-medium text-white transition duration-200 ${
-                  resource.date === "Aktif" ? "bg-brand-500 hover:bg-brand-600" : "bg-gray-400 cursor-not-allowed"
-                }`}
-              >
-                {resource.date === "Aktif" ? ( <><FiCheckCircle /> Talebi Gönder</> ) : "Şu An Kullanılamaz"}
-              </button>
+            <div>
+              <label className="text-sm font-bold text-gray-600 dark:text-gray-300">Etkinlik / Kullanım Amacı</label>
+              <input type="text" placeholder="Örn: Proje Çalışması" className="mt-2 flex h-12 w-full items-center justify-center rounded-xl border border-gray-200 bg-white/0 p-3 text-sm outline-none focus:border-brand-500 dark:border-white/10 dark:text-white" required />
             </div>
-          </Card>
+
+            <div>
+              <label className="text-sm font-bold text-gray-600 dark:text-gray-300">Talep Edilen Tarih</label>
+              {/* Eğer takvimden bir gün seçildiyse inputa otomatik o tarihi yaz, seçilmediyse boş kalsın */}
+              <input type="date" value={selectedDay ? `2026-03-${selectedDay.toString().padStart(2, '0')}` : ""} onChange={() => {}} className="mt-2 flex h-12 w-full items-center justify-center rounded-xl border border-gray-200 bg-white/0 p-3 text-sm outline-none focus:border-brand-500 dark:border-white/10 dark:text-white" required />
+            </div>
+
+            <div>
+              <label className="text-sm font-bold text-gray-600 dark:text-gray-300 mb-2 block">Saat Aralığı</label>
+              <div className="flex items-center gap-2">
+                <input type="time" className="flex h-12 w-full items-center justify-center rounded-xl border border-gray-200 bg-white/0 p-3 text-sm outline-none focus:border-brand-500 dark:border-white/10 dark:text-white" required />
+                <span className="text-gray-400 font-bold">-</span>
+                <input type="time" className="flex h-12 w-full items-center justify-center rounded-xl border border-gray-200 bg-white/0 p-3 text-sm outline-none focus:border-brand-500 dark:border-white/10 dark:text-white" required />
+              </div>
+            </div>
+
+            <button type="submit" className="mt-4 w-full rounded-xl bg-[#e6b13e] py-[12px] text-base font-bold text-white transition duration-200 hover:bg-[#d6a12e]">
+              ✔️ Talebi Gönder
+            </button>
+          </form>
         </div>
 
       </div>
     </div>
   );
-};
-
-export default ResourceDetail;
+}

@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import MiniCalendar from "components/calendar/MiniCalendar";
-import { IoMdHome } from "react-icons/io";
 import { IoDocuments } from "react-icons/io5";
-import { MdBarChart, MdDashboard, MdPerson } from "react-icons/md";
-import { FiClock } from "react-icons/fi"; 
+import { MdCheckCircle, MdWarning } from "react-icons/md";
+import { FiClock, FiPlusCircle, FiCalendar } from "react-icons/fi"; 
 
 import Widget from "components/widget/Widget";
 import Card from "components/card";
 
 const Dashboard = () => {
-  // 1. SİSTEME GİREN KİŞİNİN ROLÜNÜ ÇEKİYORUZ
   const [role, setRole] = useState("student");
   
   useEffect(() => {
@@ -19,7 +17,6 @@ const Dashboard = () => {
     }
   }, []);
 
-  // 2. TÜM VERİTABANI SİMÜLASYONU
   const allReservations = [
     { id: 1, resource: "Z-04 Yazılım Laboratuvarı", time: "10:00 - 12:00", user: "Emine Yenil", status: "Onaylandı" },
     { id: 2, resource: "Toplantı Odası A", time: "14:00 - 15:30", user: "Ahmet Yılmaz", status: "Beklemede" },
@@ -27,52 +24,72 @@ const Dashboard = () => {
     { id: 4, resource: "Konferans Salonu", time: "09:00 - 11:00", user: "Emine Yenil", status: "Beklemede" },
   ];
 
-  // 3. FİLTRELEME MANTIĞI (Sihrin Gerçekleştiği Yer)
-  // Eğer giren yöneticiyse hepsini göster, değilse SADECE Emine Yenil'in rezervasyonlarını göster.
   const displayedReservations = role === "admin" 
     ? allReservations 
     : allReservations.filter(res => res.user === "Emine Yenil");
 
   return (
     <div>
-      {/* --- ÜST KISIM: İSTATİSTİK KARTLARI --- */}
-      <div className="mt-3 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-6">
-        <Widget
-          icon={<IoMdHome className="h-6 w-6" />}
-          title={"Toplam Laboratuvar"}
-          subtitle={"12 Adet"}
-        />
-        <Widget
-          icon={<MdDashboard className="h-6 w-6" />}
-          title={"Toplantı Odası"}
-          subtitle={"8 Adet"}
-        />
-        <Widget
-          icon={<IoDocuments className="h-7 w-7" />}
-          title={"Onay Bekleyen"}
-          subtitle={"5 Talep"}
-        />
-        <Widget
-          icon={<MdBarChart className="h-7 w-7" />}
-          title={"Günlük Doluluk"}
-          subtitle={"%75"}
-        />
-        <Widget
-          icon={<MdPerson className="h-7 w-7" />}
-          title={"Akademisyen"}
-          subtitle={"42 Kişi"}
-        />
-        <Widget
-          icon={<IoDocuments className="h-6 w-6" />}
-          title={"Toplam Rezervasyon"}
-          subtitle={"1,245"}
-        />
+      {/* --- ÜST KISIM: AKILLI VE İŞLEVLİ BİLGİ KARTLARI --- */}
+      <div className="mt-3 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+        
+        {role === "admin" ? (
+          // YÖNETİCİ KARTLARI
+          <>
+            <Widget
+              icon={<IoDocuments className="h-7 w-7 text-orange-500" />}
+              title={"Aksiyon Bekleyen"}
+              subtitle={"5 Yeni Talep"}
+            />
+            <Widget
+              icon={<FiCalendar className="h-6 w-6 text-brand-500" />}
+              title={"Bugünkü Yoğunluk"}
+              subtitle={"12 Aktif Kullanım"}
+            />
+            <Widget
+              icon={<MdWarning className="h-7 w-7 text-red-500" />}
+              title={"Arızalı / Bakımda"}
+              subtitle={"2 Kaynak Devre Dışı"}
+            />
+          </>
+        ) : (
+          // ÖĞRENCİ / AKADEMİSYEN KARTLARI
+          <>
+            <Widget
+              icon={<FiClock className="h-7 w-7 text-brand-500" />}
+              title={"Sıradaki Rezervasyonum"}
+              subtitle={"Bugün, 10:00 (Z-04 Lab)"}
+            />
+            <Widget
+              icon={<MdCheckCircle className="h-7 w-7 text-green-500" />}
+              title={"Onaylanan Taleplerim"}
+              subtitle={"Toplam 3 Adet"}
+            />
+            {/* Tıklanabilir Hızlı Rezervasyon Butonu */}
+            <button 
+              onClick={() => alert("Hızlı rezervasyon sayfasına yönlendiriliyor...")}
+              className="!flex flex-row flex-grow items-center rounded-[20px] border-2 border-dashed border-brand-500 bg-white p-4 shadow-3xl shadow-shadow-500 transition-colors hover:bg-gray-50 cursor-pointer dark:!bg-navy-800 dark:hover:!bg-navy-700 dark:shadow-none"
+            >
+              <div className="ml-[18px] flex h-[90px] w-auto flex-row items-center">
+                <div className="rounded-full bg-brand-50 p-3 dark:bg-navy-700">
+                  <FiPlusCircle className="h-7 w-7 text-brand-500" />
+                </div>
+              </div>
+              <div className="h-50 ml-4 flex w-auto flex-col justify-center text-left">
+                <h4 className="text-xl font-bold text-navy-700 dark:text-white">
+                  Yeni Talep Oluştur
+                </h4>
+                <p className="text-sm font-medium text-gray-500">
+                  Hızlıca kaynak rezerve et
+                </p>
+              </div>
+            </button>
+          </>
+        )}
       </div>
 
       {/* --- ORTA KISIM: LİSTE VE TAKVİM --- */}
       <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-2">
-        
-        {/* Sol Taraf: REZERVASYON LİSTESİ */}
         <Card extra={"w-full p-6 h-full"}>
           <div className="mb-6 flex items-center justify-between">
             <h4 className="text-xl font-bold text-navy-700 dark:text-white">
@@ -86,7 +103,7 @@ const Dashboard = () => {
           <div className="flex flex-col gap-4">
             {displayedReservations.length > 0 ? (
               displayedReservations.map((res) => (
-                <div key={res.id} className="flex items-center justify-between rounded-2xl bg-lightPrimary p-4 shadow-sm dark:bg-navy-800 transition hover:bg-gray-50 dark:hover:bg-navy-700">
+                <div key={res.id} className="flex items-center justify-between rounded-2xl bg-lightPrimary p-4 shadow-sm transition hover:bg-gray-50 dark:bg-navy-800 dark:hover:bg-navy-700">
                   <div className="flex items-center gap-4">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-500 text-white dark:bg-brand-400">
                       <FiClock className="h-6 w-6" />
@@ -109,12 +126,11 @@ const Dashboard = () => {
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-sm mt-4">Henüz yaklaşan bir rezervasyonunuz bulunmuyor.</p>
+              <p className="mt-4 text-sm text-gray-500">Henüz yaklaşan bir rezervasyonunuz bulunmuyor.</p>
             )}
           </div>
         </Card>
 
-        {/* Sağ Taraf: TAKVİM */}
         <div className="grid grid-cols-1 rounded-[20px]">
           <MiniCalendar />
         </div>

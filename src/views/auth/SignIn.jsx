@@ -1,47 +1,97 @@
-import React from "react";
+import React, { useState } from "react";
 
 export default function SignIn() {
-  
-  // Backend'e bağlanana kadar arayüzü test edebilmek için rolü hafızaya alıp yönlendiriyoruz.
-  // Backend eklendiğinde bu kısım API isteği atacak şekilde güncellenecektir.
-  const handleLogin = (role) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleLogin = (e) => {
+    e.preventDefault(); 
+    setError(""); 
+
+    let role = "";
+    
+    if (email === "admin@kiu.edu.tr" && password === "123456") {
+      role = "admin";
+    } else if (email === "akademisyen@istiklal.edu.tr" && password === "123456") {
+      role = "academic";
+    } else if (email === "ogrenci@istiklal.edu.tr" && password === "123456") {
+      role = "student";
+    } else {
+      setError("❌ E-posta veya şifre hatalı!");
+      return; 
+    }
+
     localStorage.setItem("userRole", role);
     window.location.href = "/admin/default";
   };
 
   return (
-    <div className="mt-16 mb-16 flex h-full w-full items-center justify-center px-2 md:mx-0 md:px-0 lg:mb-10 lg:items-center lg:justify-start">
-      <div className="mt-[10vh] w-full max-w-full flex-col items-center md:pl-4 lg:pl-0 xl:max-w-[420px]">
-        <h4 className="mb-2.5 text-4xl font-bold text-navy-700 dark:text-white">
-          KİÜ Kaynak Yönetimi
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/kampus.png')" }}
+    >
+      
+      {/* --- KARARTMA KATMANI --- */}
+      <div className="absolute inset-0 z-0 bg-black/50"></div>
+
+      {/* --- TAM ŞEFFAF CAM KUTU (Glassmorphism) --- */}
+      {/* bg-white/10: Sadece %10 beyaz, backdrop-blur-xl: Yüksek bulanıklık, border-white/30: Şeffaf beyaz kenarlık */}
+      <div className="relative z-10 mx-4 w-full max-w-[420px] flex-col items-center rounded-3xl border border-white/30 bg-white/10 px-8 py-10 shadow-2xl backdrop-blur-xl">
+        
+        <h4 className="mb-2.5 text-center text-3xl font-bold text-white">
+          Kaynak Yönetim Platformu
         </h4>
-        <p className="mb-9 ml-1 text-base text-gray-600">
-          Lütfen giriş yapmak istediğiniz rolü seçin.
+        <p className="mb-8 text-center text-sm text-gray-200">
+          Lütfen kurumsal e-posta ve şifrenizle giriş yapın.
         </p>
 
-        {/* --- GİRİŞ BUTONLARI --- */}
-        <div className="flex flex-col gap-4">
-          <button
-            onClick={() => handleLogin("student")}
-            className="linear w-full rounded-xl bg-brand-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-brand-600"
-          >
-            Öğrenci Olarak Giriş Yap
-          </button>
+        <form onSubmit={handleLogin} className="flex flex-col gap-4">
+          
+          <div>
+            <label className="text-sm font-bold text-white">Kurumsal E-Posta</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="ornek@istiklal.edu.tr"
+              /* İnputlar da şeffaf cam gibi yapıldı ve yazılar beyaza çevrildi */
+              className="mt-2 flex h-12 w-full items-center justify-center rounded-xl border border-white/20 bg-white/10 p-3 text-sm text-white placeholder:text-gray-300 outline-none transition-colors focus:border-white focus:bg-white/20"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-bold text-white">Şifre</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Min. 8 karakter"
+              className="mt-2 flex h-12 w-full items-center justify-center rounded-xl border border-white/20 bg-white/10 p-3 text-sm text-white placeholder:text-gray-300 outline-none transition-colors focus:border-white focus:bg-white/20"
+              required
+            />
+          </div>
+
+          {error && <p className="text-center text-sm font-bold text-red-400">{error}</p>}
 
           <button
-            onClick={() => handleLogin("academic")}
-            className="linear w-full rounded-xl bg-blue-600 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-blue-700"
+            type="submit"
+            className="linear mt-4 w-full rounded-xl bg-[#e6b13e] py-[12px] text-base font-bold text-white shadow-md transition duration-200 hover:bg-[#d6a12e] hover:shadow-lg active:bg-[#c29022]"
           >
-            Akademisyen Olarak Giriş Yap
+            Sisteme Giriş Yap
           </button>
-
-          <button
-            onClick={() => handleLogin("admin")}
-            className="linear w-full rounded-xl border-2 border-brand-500 bg-transparent py-[12px] text-base font-medium text-brand-500 transition duration-200 hover:bg-brand-50 dark:border-brand-400 dark:text-brand-400 dark:hover:bg-brand-900"
-          >
-            Yönetici Olarak Giriş Yap
-          </button>
+        </form>
+        
+        <div className="mt-6 flex justify-center">
+           <button 
+             onClick={() => alert("Şifre sıfırlama linki e-postanıza gönderildi.")} 
+             className="text-sm font-bold text-gray-300 transition-colors hover:text-white"
+           >
+             Şifrenizi mi unuttunuz?
+           </button>
         </div>
+
       </div>
     </div>
   );
