@@ -12,6 +12,11 @@
         -webkit-font-smoothing: antialiased;
         letter-spacing: -0.5px;
     }
+    
+    /* --- KARANLIK MOD BEYAZ ŞERİT ÇÖZÜMÜ --- */
+    body {
+        @apply bg-[#F4F7FE] text-navy-700 dark:bg-navy-900 dark:text-white; 
+    }
 }
 
 /* Checkbox stilleri */
@@ -28,7 +33,6 @@ input.defaultCheckbox::before {
 input:checked.defaultCheckbox::before { 
     opacity: 1;
 }
-
 
 /* 1. Takvim Genel Çerçevesi (Grafik/Tablo görünümünü siler) */
 .react-calendar {
@@ -107,4 +111,41 @@ input:checked.defaultCheckbox::before {
 .react-calendar__tile:enabled:focus {
     background-color: #F4F7FE !important;
     color: #1B3D6D !important;
+}
+@layer base {
+    html, body, #root {
+        @apply min-h-screen w-full bg-[#F4F7FE] text-navy-700 dark:bg-navy-900 dark:text-white !important;
+    }
+    
+    html {
+        font-family: 'DM Sans', sans-serif !important;
+        font-feature-settings: 'kern' !important;
+        -webkit-font-smoothing: antialiased;
+        letter-spacing: -0.5px;
+    }
+}
+/* --- İNATÇI ARAMA KUTUSUNU KESİN OLARAK ŞEFFAF YAPAN KOD --- */
+#kyp-search {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+#kyp-search:focus {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Chrome'un otomatik doldurma (autofill) yapıp arkaplanı beyaz/sarı yapmasını engeller */
+#kyp-search:-webkit-autofill,
+#kyp-search:-webkit-autofill:hover, 
+#kyp-search:-webkit-autofill:focus, 
+#kyp-search:-webkit-autofill:active{
+    -webkit-box-shadow: 0 0 0 50px #0b1437 inset !important; /* Koyu lacivert ile doldurur */
+    -webkit-text-fill-color: white !important;
 }

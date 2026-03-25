@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import Card from "components/card";
-import { FiTrash2, FiClock, FiCheckCircle, FiXCircle, FiAlertTriangle, FiSearch, FiCheck, FiInfo } from "react-icons/fi";
+import { FiTrash2, FiClock, FiCheckCircle, FiXCircle, FiAlertTriangle, FiSearch, FiInfo } from "react-icons/fi";
 import { BsFillCheckCircleFill } from "react-icons/bs";
 
 export default function MyReservations() {
   
-  // --- YENİ: VERİTABANI ŞEMASINA UYGUN VERİLER ---
   const [reservations, setReservations] = useState([
     { 
       reservation_id: 1, 
@@ -41,7 +40,6 @@ export default function MyReservations() {
   const [selectedRes, setSelectedRes] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // --- YENİ: YARDIMCI FONKSİYONLAR ---
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -52,18 +50,16 @@ export default function MyReservations() {
     return date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
   };
 
-  // Veritabanından gelen İngilizce ENUM değerlerini Türkçeye ve stillere çevirir
   const getStatusDisplay = (statusCode) => {
     switch(statusCode) {
       case "APPROVED": return { text: "Onaylandı", style: "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400", icon: <FiCheckCircle /> };
       case "PENDING": return { text: "Beklemede", style: "bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400", icon: <FiClock /> };
-      case "COMPLETED": return { text: "Tamamlandı", style: "bg-green-100 text-green-600 dark:bg-green/10 dark:text-green-300", icon: <BsFillCheckCircleFill /> };
+      case "COMPLETED": return { text: "Tamamlandı", style: "bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-300", icon: <BsFillCheckCircleFill /> };
       case "CANCELLED": return { text: "İptal Edildi", style: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400", icon: <FiXCircle /> };
       default: return { text: statusCode, style: "bg-gray-100 text-gray-500", icon: <FiInfo /> };
     }
   };
 
-  // --- MANTIK GÜNCELLEMELERİ ---
   const handleOpenModal = (res) => {
     setSelectedRes(res);
     setIsModalOpen(true);
@@ -77,7 +73,6 @@ export default function MyReservations() {
     setSelectedRes(null);
   };
 
-  // Arama filtresi yeni değişken adlarına göre güncellendi
   const filteredReservations = reservations.filter((res) => {
     const searchLower = searchTerm.toLowerCase();
     const statusText = getStatusDisplay(res.durum).text.toLowerCase();
@@ -94,7 +89,6 @@ export default function MyReservations() {
     <div className="mt-3 flex h-full w-full flex-col gap-5">
       
       <div className="mb-4">
-        <h2 className="text-3xl font-bold text-navy-700 dark:text-white">Rezervasyonlarım</h2>
         <p className="mt-1 text-sm font-medium text-gray-600 dark:text-gray-400">
           Geçmiş ve gelecek tüm kaynak kullanım talepleriniz.
         </p>
@@ -107,14 +101,16 @@ export default function MyReservations() {
             Talep Geçmişi
           </h4>
           
-          <div className="flex h-10 items-center rounded-full bg-lightPrimary text-navy-700 dark:bg-navy-900 dark:text-white px-4 border border-gray-200 dark:border-white/10 w-full md:w-72">
-            <FiSearch className="h-4 w-4 text-gray-400 dark:text-white" />
+          <div className="flex h-10 items-center rounded-full bg-lightPrimary dark:bg-navy-900 text-navy-700 dark:text-white px-4 border border-gray-200 dark:border-white/10 w-full md:w-72">
+            <FiSearch className="h-4 w-4 text-gray-400 dark:text-white shrink-0" />
             <input
+              id="kyp-search" 
+              autoComplete="off" 
               type="text"
               placeholder="Laboratuvar, tarih veya durum ara..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)} 
-              className="ml-2 w-full bg-transparent text-sm outline-none placeholder:text-gray-400 dark:placeholder:text-white/50"
+              className="ml-2 w-full bg-transparent border-none outline-none focus:outline-none focus:ring-0 text-sm placeholder:text-gray-400 dark:placeholder:text-white/50 dark:text-white"
             />
           </div>
         </div>
