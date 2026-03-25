@@ -1,22 +1,69 @@
 import React, { useState } from "react";
 import Card from "components/card";
-import { FiTrash2, FiClock, FiCheckCircle, FiXCircle, FiAlertTriangle, FiSearch, FiCheck } from "react-icons/fi";
+import { FiTrash2, FiClock, FiCheckCircle, FiXCircle, FiAlertTriangle, FiSearch, FiCheck, FiInfo } from "react-icons/fi";
 import { BsFillCheckCircleFill } from "react-icons/bs";
 
 export default function MyReservations() {
+  
+  // --- YENİ: VERİTABANI ŞEMASINA UYGUN VERİLER ---
   const [reservations, setReservations] = useState([
-    { id: 1, resource: "Z-04 Yazılım Laboratuvarı", date: "16 Mart 2026", time: "10:00 - 12:00", status: "Onaylandı", type: "upcoming" },
-    { id: 2, resource: "Toplantı Odası A", date: "18 Mart 2026", time: "14:00 - 15:30", status: "Beklemede", type: "upcoming" },
-    { id: 3, resource: "Amfi 101", date: "10 Mart 2026", time: "13:00 - 15:00", status: "Tamamlandı", type: "past" },
-    { id: 4, resource: "Fizik Laboratuvarı", date: "05 Mart 2026", time: "09:00 - 12:00", status: "İptal Edildi", type: "past" },
+    { 
+      reservation_id: 1, 
+      kaynak_adi: "Z-04 Yazılım Laboratuvarı", 
+      baslangic_saati: "2026-03-16T10:00:00", 
+      bitis_saati: "2026-03-16T12:00:00", 
+      durum: "APPROVED" 
+    },
+    { 
+      reservation_id: 2, 
+      kaynak_adi: "Toplantı Odası A", 
+      baslangic_saati: "2026-03-18T14:00:00", 
+      bitis_saati: "2026-03-18T15:30:00", 
+      durum: "PENDING" 
+    },
+    { 
+      reservation_id: 3, 
+      kaynak_adi: "Amfi 101", 
+      baslangic_saati: "2026-03-10T13:00:00", 
+      bitis_saati: "2026-03-10T15:00:00", 
+      durum: "COMPLETED" 
+    },
+    { 
+      reservation_id: 4, 
+      kaynak_adi: "Fizik Laboratuvarı", 
+      baslangic_saati: "2026-03-05T09:00:00", 
+      bitis_saati: "2026-03-05T12:00:00", 
+      durum: "CANCELLED" 
+    },
   ]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRes, setSelectedRes] = useState(null);
-  
-  // --- YENİ: ARAMA ÇUBUĞU STATE'İ ---
   const [searchTerm, setSearchTerm] = useState("");
 
+  // --- YENİ: YARDIMCI FONKSİYONLAR ---
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
+
+  const formatTime = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  // Veritabanından gelen İngilizce ENUM değerlerini Türkçeye ve stillere çevirir
+  const getStatusDisplay = (statusCode) => {
+    switch(statusCode) {
+      case "APPROVED": return { text: "Onaylandı", style: "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400", icon: <FiCheckCircle /> };
+      case "PENDING": return { text: "Beklemede", style: "bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400", icon: <FiClock /> };
+      case "COMPLETED": return { text: "Tamamlandı", style: "bg-green-100 text-green-600 dark:bg-green/10 dark:text-green-300", icon: <BsFillCheckCircleFill /> };
+      case "CANCELLED": return { text: "İptal Edildi", style: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400", icon: <FiXCircle /> };
+      default: return { text: statusCode, style: "bg-gray-100 text-gray-500", icon: <FiInfo /> };
+    }
+  };
+
+  // --- MANTIK GÜNCELLEMELERİ ---
   const handleOpenModal = (res) => {
     setSelectedRes(res);
     setIsModalOpen(true);
@@ -24,20 +71,22 @@ export default function MyReservations() {
 
   const handleConfirmCancel = () => {
     setReservations(prev => 
-      prev.map(item => item.id === selectedRes.id ? { ...item, status: "İptal Edildi", type: "past" } : item)
+      prev.map(item => item.reservation_id === selectedRes.reservation_id ? { ...item, durum: "CANCELLED" } : item)
     );
     setIsModalOpen(false);
     setSelectedRes(null);
   };
 
-  // --- YENİ: FİLTRELEME MANTIĞI (Sihir burada!) ---
-  // Kullanıcının yazdığı kelimeyi alıp; kaynak adında, tarihte veya durumda arıyoruz.
+  // Arama filtresi yeni değişken adlarına göre güncellendi
   const filteredReservations = reservations.filter((res) => {
     const searchLower = searchTerm.toLowerCase();
+    const statusText = getStatusDisplay(res.durum).text.toLowerCase();
+    const dateText = formatDate(res.baslangic_saati).toLowerCase();
+    
     return (
-      res.resource.toLowerCase().includes(searchLower) ||
-      res.status.toLowerCase().includes(searchLower) ||
-      res.date.toLowerCase().includes(searchLower)
+      res.kaynak_adi.toLowerCase().includes(searchLower) ||
+      statusText.includes(searchLower) ||
+      dateText.includes(searchLower)
     );
   });
 
@@ -53,20 +102,18 @@ export default function MyReservations() {
 
       <Card extra={"w-full h-full sm:overflow-auto px-6 pb-6 pt-4"}>
         
-        {/* --- YENİ: KART BAŞLIĞI VE ARAMA ÇUBUĞU YAN YANA --- */}
         <div className="mb-4 mt-2 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
           <h4 className="text-lg font-bold text-navy-700 dark:text-white">
             Talep Geçmişi
           </h4>
           
-          {/* Arama Çubuğu UI (Horizon UI'ın orijinal arama çubuğuna benzer) */}
           <div className="flex h-10 items-center rounded-full bg-lightPrimary text-navy-700 dark:bg-navy-900 dark:text-white px-4 border border-gray-200 dark:border-white/10 w-full md:w-72">
             <FiSearch className="h-4 w-4 text-gray-400 dark:text-white" />
             <input
               type="text"
               placeholder="Laboratuvar, tarih veya durum ara..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)} // Klavyeye her basıldığında state güncellenir
+              onChange={(e) => setSearchTerm(e.target.value)} 
               className="ml-2 w-full bg-transparent text-sm outline-none placeholder:text-gray-400 dark:placeholder:text-white/50"
             />
           </div>
@@ -83,39 +130,33 @@ export default function MyReservations() {
               </tr>
             </thead>
             <tbody>
-              {/* Eski 'reservations.map' yerine 'filteredReservations.map' kullanıyoruz */}
               {filteredReservations.length > 0 ? (
-                filteredReservations.map((res) => (
-                  <tr key={res.id} className="border-b border-gray-50 transition-colors hover:bg-gray-50 dark:border-white/5 dark:hover:bg-navy-800">
+                filteredReservations.map((res) => {
+                  const statusInfo = getStatusDisplay(res.durum);
+
+                  return (
+                  <tr key={res.reservation_id} className="border-b border-gray-50 transition-colors hover:bg-gray-50 dark:border-white/5 dark:hover:bg-navy-800">
                     
                     <td className="py-4 pr-4">
-                      <p className="text-base font-bold text-navy-700 dark:text-white">{res.resource}</p>
-                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{res.date}</p>
+                      <p className="text-base font-bold text-navy-700 dark:text-white">{res.kaynak_adi}</p>
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{formatDate(res.baslangic_saati)}</p>
                     </td>
 
                     <td className="py-4 pr-4">
                       <div className="flex items-center gap-2 text-sm font-bold text-navy-700 dark:text-white">
-                        <FiClock className="text-brand-500" /> {res.time}
+                        <FiClock className="text-brand-500" /> {formatTime(res.baslangic_saati)} - {formatTime(res.bitis_saati)}
                       </div>
                     </td>
 
                     <td className="py-4 pr-4">
-                      <span className={`flex w-fit items-center gap-1 rounded-full px-3 py-1 text-xs font-bold
-                        ${res.status === "Onaylandı" ? "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400" : ""}
-                        ${res.status === "Beklemede" ? "bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400" : ""}
-                        ${res.status === "Tamamlandı" ? "bg-green-100 text-green-600 dark:bg-green/10 dark:text-green-300" : ""}
-                        ${res.status === "İptal Edildi" ? "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400" : ""}
-                      `}>
-                        {res.status === "Onaylandı" && <FiCheckCircle />}
-                        {res.status === "Beklemede" && <FiClock />}
-                        {res.status === "İptal Edildi" && <FiXCircle />}
-                        {res.status === "Tamamlandı" && <BsFillCheckCircleFill />}
-                        {res.status}
+                      <span className={`flex w-fit items-center gap-1 rounded-full px-3 py-1 text-xs font-bold ${statusInfo.style}`}>
+                        {statusInfo.icon}
+                        {statusInfo.text}
                       </span>
                     </td>
 
                     <td className="py-4 text-right">
-                      {(res.status === "Onaylandı" || res.status === "Beklemede") ? (
+                      {(res.durum === "APPROVED" || res.durum === "PENDING") ? (
                         <button 
                           onClick={() => handleOpenModal(res)}
                           className="flex items-center justify-end gap-2 text-sm font-bold text-red-500 transition-colors hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 ml-auto"
@@ -128,9 +169,8 @@ export default function MyReservations() {
                     </td>
 
                   </tr>
-                ))
+                )})
               ) : (
-                /* Aranan kelime bulunamazsa gösterilecek mesaj */
                 <tr>
                   <td colSpan="4" className="py-8 text-center text-sm font-medium text-gray-500">
                     "{searchTerm}" ile eşleşen bir rezervasyon bulunamadı.
@@ -142,7 +182,7 @@ export default function MyReservations() {
         </div>
       </Card>
 
-      {/* --- İPTAL ONAY PENCERESİ (MODAL) --- */}
+      {/* --- İPTAL ONAY PENCERESİ --- */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 transition-all">
           <div className="w-full max-w-md transform rounded-3xl bg-white p-6 shadow-2xl transition-all dark:bg-navy-800 border border-gray-100 dark:border-navy-700">
@@ -153,7 +193,7 @@ export default function MyReservations() {
               Rezervasyonu İptal Et
             </h3>
             <p className="mb-6 text-center text-sm text-gray-600 dark:text-gray-300">
-              <strong className="text-navy-700 dark:text-white">{selectedRes?.date}</strong> tarihindeki <strong className="text-navy-700 dark:text-white">{selectedRes?.resource}</strong> rezervasyonunuzu iptal etmek istediğinize emin misiniz? Bu işlem geri alınamaz.
+              <strong className="text-navy-700 dark:text-white">{formatDate(selectedRes?.baslangic_saati)}</strong> tarihindeki <strong className="text-navy-700 dark:text-white">{selectedRes?.kaynak_adi}</strong> rezervasyonunuzu iptal etmek istediğinize emin misiniz? Bu işlem geri alınamaz.
             </p>
             <div className="flex gap-3">
               <button 
